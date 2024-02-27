@@ -36,21 +36,54 @@
                 this.view.select.append( option )
             }
         }
-        setPokemon(){
+        async setPokemon(pokemon){
+            
+            let data = await this.data.getPokemon( pokemon )
+            if( data ){
 
+                const name = this.data.reformatPokemonName( pokemon )
+                this.view.stats.name.textContent = name
+
+                this.view.images.src = data.sprites.front_default
+                this.view.images.alt = name
+                
+                this.view.stats.abilities.innerHTML = ""
+
+                this.view.stats.moves.innerHTML = ""
+
+                data.abilities.forEach( (ability, i ) => {
+                    let a = document.createElement('li')
+                    const affix = i < data.abilities.length - 1 ? ", " : "" 
+                    a.textContent = ability.ability.name + affix
+                    this.view.stats.abilities.append(a)
+                })
+
+                data.moves.forEach( (move, i ) => {
+                    let m = document.createElement('li')
+                    const affix = i < data.moves.length - 1 ? ", " : "" 
+                    m.textContent = move.move.name + affix
+                    this.view.stats.moves.append(m)
+                })
+                // this.view.abilities. = pokemon.replaceAll("-"," ")
+            }else{
+                console.log("whoopsies something went wrong - try to catch them all later")
+            }   
         }
         randomButtonClickHandler = ( event ) => {
             const name = this.data.getRandomPokemon().name
 
             // console.log("name:",name)
 
-            this.view.updatePrompt( name )
+            this.setPokemon( name )
+            // this.view.updatePrompt( name )
         }
 
 
         selectChangeHandler( event ) {
         
             this.view.updatePrompt( event.currentTarget.value )
+
+            if( event.currentTarget.value != "")this.setPokemon( event.currentTarget.value )
         }
 
         enableButtons(){
@@ -84,12 +117,29 @@
 
                 
             },
-            getPokemon(pokemon){
-                this.currentPokemon = pokemon
+            async getPokemon(pokemon){
                 //fetch pokemon
+                const response = await this.getData("pokemon/" + pokemon)
+                if(response.sucess){
+                    this.currentPokemon = response.data
+                    return this.currentPokemon
+                }else{
+                    return false
+                }
             },
             formatPokemonName(pokemon){
                 return pokemon.replaceAll(" ", "-")
+            },
+            reformatPokemonName(pokemon){
+                pokemon = pokemon.replaceAll("-", " ")
+                const name = this.toTitleCase( pokemon )
+                return name
+            },
+            //https://www.w3docs.com/snippets/javascript/how-to-convert-string-to-title-case-with-javascript.html
+            toTitleCase(str) {
+                return str.toLowerCase().split(' ').map(function (word) {
+                  return (word.charAt(0).toUpperCase() + word.slice(1));
+                }).join(' ');
             },
             getRandomPokemon(){
                 return this.allPokemon [ Math.floor( Math.random() * this.allPokemon.length ) ]
@@ -100,7 +150,6 @@
                     response => response.json()
                 ).then( 
                     json => {
-                        console.log(json) 
                         return { sucess: true, data: json }
                     },
                     error => {
@@ -117,6 +166,7 @@
             select: document.querySelector('#pokemon-select'),
             randomButton: document.querySelector('.random-pokemon-button'),
             textPrompt:  document.querySelector('.prompt'),
+            images:  document.querySelector('.images img'),
             stats: {
                 name: document.querySelector('.name'),
                 abilities: document.querySelector('.abilities'),

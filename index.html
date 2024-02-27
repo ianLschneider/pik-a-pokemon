@@ -13,12 +13,31 @@
 <body>
    <main class="main-view">
         <div class="finder">
-            <div class="has-border stats"></div>
-            <div class="has-border images"></div>
+            <div class="has-border stats">
+                    
+                <div clas="name-container">
+                    <span>Name:</span>
+                    <p class="name"></p>
+                </div>
+                <div clas="abilities-container">
+                    <span>Abilities:</span>
+                    <ul class="abilities"></ul>
+                </div>
+                <div clas="moves-container">
+                    <span>Moves:</span>
+                    <ul class="moves"></ul>
+                </div>
+               
+            </div>
+            <div class="has-border images">
+                <img src="" alt="">
+            </div>
             <div class="toolbar">
                 <button type="button" class="has-border random-pokemon-button"></button>
                 <div class="all-pokemon-select">
-                    <select name="pokemon-select" id="pokemon-select" class="has-border"></select>
+                    <select name="pokemon-select" id="pokemon-select" class="has-border">
+                        <option value="">Pick A Pokémon</option>
+                    </select>
                 </div>
             </div>
         </div>
