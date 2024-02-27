@@ -10,6 +10,7 @@
 
             this.init()
         }
+       
         async init(){
             let data = await this.data.getAllPokemon()
             if( data ){
@@ -21,14 +22,15 @@
                 console.log("no pokemon")
             }   
         }
+       
         setFinderText(){
             this.view.randomButton.innerText = this.text.randomButton
             // this.view.updateText( this.text.intro, this.view.prompt )
             // this.view.updateText( this.text.select, this.view.select )
         }
+        
         setAllPokemon(){
             for(let pokemon of this.data.allPokemon){
-                // console.log("pokemon:", pokemon)
 
                 let option = document.createElement( 'option' )
                 option.value = pokemon.name
@@ -37,6 +39,7 @@
                 this.view.select.append( option )
             }
         }
+       
         async setPokemon(pokemon){
             
             let data = await this.data.getPokemon( pokemon )
@@ -83,16 +86,13 @@
                 console.log("whoopsies something went wrong - try to catch them all later")
             }   
         }
-        randomButtonClickHandler = ( event ) => {
-            const name = this.data.getRandomPokemon().name
+        
+        enableButtons(){
+            this.view.randomButton.addEventListener( 'click', this.randomButtonClickHandler )
 
-            // console.log("name:",name)
-
-            this.setPokemon( name )
-
-            
-            // this.view.updatePrompt( name )
+            this.view.select.addEventListener( 'change', this.selectChangeHandler )
         }
+
         enableCarousel(){
             this.view.carousel.nextBtn.addEventListener('click', event => {
                 if( this.data.currentPokemonSprites.length ){
@@ -102,7 +102,6 @@
                         this.data.currentPokemonSpriteIndex = 0
                     }
                     this.view.carousel.images.src =  this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]
-                    console.log("this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]:",this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex])
                 }
             })
 
@@ -114,24 +113,20 @@
                         this.data.currentPokemonSpriteIndex = this.data.currentPokemonSprites.length - 1
                     }
                     this.view.carousel.images.src =  this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]
-                    console.log("this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]:",this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex])
                 }
             })
         }
-        selectChangeHandler( event ) {
-        
-            this.view.updatePrompt( event.currentTarget.value )
 
+        randomButtonClickHandler = ( event ) => {
+            const name = this.data.getRandomPokemon().name
+            this.setPokemon( name )
+        }
+
+        selectChangeHandler = ( event ) => {
             if( event.currentTarget.value != "")this.setPokemon( event.currentTarget.value )
         }
 
-        enableButtons(){
-            this.view.randomButton.addEventListener( 'click', this.randomButtonClickHandler )
-
-            const boundSelectChangeHandler = this.selectChangeHandler.bind( this )
-            this.view.select.addEventListener( 'change', boundSelectChangeHandler )
-        }
-
+       
        
         
     }
