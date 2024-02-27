@@ -4,6 +4,9 @@
     font-weight: 400;
     font-style: normal;
 } */
+:root{
+    --bgColor: #dfe1db;
+}
 
 html,
 body,
@@ -17,9 +20,12 @@ body *{
 html,
 body{
     min-height: 100vh;
-    background-color: #dfe1db;
+    background-color: var(--bgColor);
 }
-
+button,
+select{
+    cursor: pointer;
+}
 .main-view{
     width: 100%;
     height: 100vh;
@@ -28,7 +34,7 @@ body{
     align-items: center; */
 
     .finder{
-        width: 100%;
+        width: calc( 100% - 40px);
         padding: 20px;
         min-width: 300px;
         max-width: 550px;
@@ -44,11 +50,11 @@ body{
         .has-border{
             border: 4px solid #000;
             border-radius: 10px;
-            background-color:  transparent;
+            background-color:  var(--bgColor);
            
         }
         .stats{
-            width: 100%;
+            width: calc( 100% - 40px);
             max-width: 490px;
             min-height: 200px;
             padding: 20px;
@@ -71,15 +77,25 @@ body{
             }
             
         }
-        .images{
-            width: 200px;
-            height: 200px;
-            img{
-                display: inline-block;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
+        .carousel{
+            .images{
+                width: 200px;
+                height: 200px;
+                img{
+                    display: inline-block;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
             }
+            text-align: center;
+            button{
+                opacity: 0.25;
+                font-size: 20px;
+                margin: 5px;
+                background-color: var(--bgColor);
+            }
+            
         }
         .toolbar{
             
@@ -94,7 +110,6 @@ body{
                 text-transform: uppercase;
                 font-weight: 600;
                 margin-bottom: 10px;
-                cursor: pointer;
                 &:hover{
                     background-color: #ccc;
                 }
@@ -109,8 +124,6 @@ body{
                 
                 /* width: 140px; */
                 select{  
-                    
-                    cursor: pointer;
                     &:hover{
                         background-color: #ccc;
                     }

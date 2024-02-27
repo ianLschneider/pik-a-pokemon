@@ -16,6 +16,7 @@
                 this.setFinderText()
                 this.enableButtons()
                 this.setAllPokemon()
+                this.enableCarousel()
             }else{
                 console.log("no pokemon")
             }   
@@ -41,15 +42,28 @@
             let data = await this.data.getPokemon( pokemon )
             if( data ){
 
-                const name = this.data.reformatPokemonName( pokemon )
-                this.view.stats.name.textContent = name
-
-                this.view.images.src = data.sprites.front_default
-                this.view.images.alt = name
-                
                 this.view.stats.abilities.innerHTML = ""
 
                 this.view.stats.moves.innerHTML = ""
+
+                this.data.currentPokemonSprites = []
+                this.data.currentPokemonSpriteIndex = 0
+
+                const name = this.data.reformatPokemonName( pokemon )
+                this.view.stats.name.textContent = name
+
+                for(let sprite in data.sprites){
+                    const s = data.sprites[sprite]
+                    if( s && typeof s === 'string' )this.data.currentPokemonSprites.push( data.sprites[sprite] )
+                }
+
+
+                if(this.data.currentPokemonSprites.length){
+                    this.view.carousel.images.src = this.data.currentPokemonSprites[0]
+                }
+                this.view.carousel.images.alt = name
+                this.view.carousel.prevBtn.style.opacity = 1
+                this.view.carousel.nextBtn.style.opacity = 1
 
                 data.abilities.forEach( (ability, i ) => {
                     let a = document.createElement('li')
@@ -75,10 +89,35 @@
             // console.log("name:",name)
 
             this.setPokemon( name )
+
+            
             // this.view.updatePrompt( name )
         }
+        enableCarousel(){
+            this.view.carousel.nextBtn.addEventListener('click', event => {
+                if( this.data.currentPokemonSprites.length ){
+                    if( this.data.currentPokemonSpriteIndex < this.data.currentPokemonSprites.length - 1 ){
+                        this.data.currentPokemonSpriteIndex ++ 
+                    }else{
+                        this.data.currentPokemonSpriteIndex = 0
+                    }
+                    this.view.carousel.images.src =  this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]
+                    console.log("this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]:",this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex])
+                }
+            })
 
-
+            this.view.carousel.prevBtn.addEventListener('click', event => {
+                if( this.data.currentPokemonSprites.length ){
+                    if( this.data.currentPokemonSpriteIndex > 0 ){
+                        this.data.currentPokemonSpriteIndex -- 
+                    }else{
+                        this.data.currentPokemonSpriteIndex = this.data.currentPokemonSprites.length - 1
+                    }
+                    this.view.carousel.images.src =  this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]
+                    console.log("this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex]:",this.data.currentPokemonSprites[this.data.currentPokemonSpriteIndex])
+                }
+            })
+        }
         selectChangeHandler( event ) {
         
             this.view.updatePrompt( event.currentTarget.value )
@@ -102,6 +141,8 @@
         // data object that holds the current pokemon and functions for fetching pokemon
         const data = {
             currentPokemon: "",
+            currentPokemonSprites: [],
+            currentPokemonSpriteIndex: 0,
             allPokemon: [],
             baseUrl: "https://pokeapi.co/api/v2/",
             async getAllPokemon(){
@@ -166,7 +207,11 @@
             select: document.querySelector('#pokemon-select'),
             randomButton: document.querySelector('.random-pokemon-button'),
             textPrompt:  document.querySelector('.prompt'),
-            images:  document.querySelector('.images img'),
+            carousel: {
+                prevBtn: document.querySelector('#prev-btn'),
+                nextBtn: document.querySelector('#next-btn'),
+                images:  document.querySelector('.images img'),
+            },
             stats: {
                 name: document.querySelector('.name'),
                 abilities: document.querySelector('.abilities'),
